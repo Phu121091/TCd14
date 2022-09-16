@@ -12,67 +12,130 @@
 // export default ManagerMember;
 
 import React, { useState } from "react";
+import { useReducer } from 'react';
 import { Button, Checkbox, Col, Form, Input, List, notification, Radio, Row, Popconfirm } from 'antd';
 import TextArea from "antd/lib/input/TextArea";
 // import data from "../data/data";
-const data = [];
+// const data = [];
 
-export default function ManagerMember() {
-    const [member, setMember] = useState(data);
+// export default function ManagerMember() {
+    // const [member, setMember] = useState(data);
+    // const [name, setName] = useState();
+    // const [age, setAge] = useState();
+    // const [gender, setGender] = useState();
+    // const [address, setAddress] = useState();
+    // const [phone, setPhone] = useState();
+    // const [iddel, setIddel] = useState();
+
+    
+
+    const ManagerMember = () =>{
+        const formReducer = (state, action) => {
+            switch (action.type) {
+                case 'add':
+                    return {
+                        ...state,
+                        member:  
+                                 [...state.member, {
+                                    id: state.member.length + 1,
+                                    name: name,
+                                    age: age,
+                                    phone: phone,
+                                    gender: gender,
+                                    address: address,
+                                }]
+                    }
+                case 'remove':
+                    return {
+                        ...state,
+                        member:state.member.filter((item) => item.id !== iddel)
+                    }
+                case 'delall':
+                    return {
+                        ...state,
+                        member:[]
+                    }
+
+            }
+        }
     const [name, setName] = useState();
     const [age, setAge] = useState();
     const [gender, setGender] = useState();
     const [address, setAddress] = useState();
     const [phone, setPhone] = useState();
-
+    const [iddel, setIddel] = useState();
+    const [state, dispatch] = useReducer(formReducer, {member:[]});
+        
 
     const handleCreateMember = (event) => {
         event.preventDefault();
-        if ((name==''||name==undefined)||(age==''||age==undefined)||(gender==''||gender==undefined)||(address=='')||(phone=='')) {
+        if ((name==''||name==undefined)||(age==''||age==undefined)||(gender==''||gender==undefined)||(address==''||address==undefined)||(phone==''||phone==undefined)) {
             notification['warning']({
                 message: 'Xin hãy điền đầy đủ thông tin',
                 duration: 3
             })
         } else {
-        setMember((item) => [...item, {
-            id: member.length + 1,
-            name: name,
-            age: age,
-            phone: phone,
-            gender: gender,
-            address: address,
-        }])}
-        console.log(phone);
+        dispatch({type:'add'});
     }
+}
+
+    const removeMember = (id) => {
+        setIddel(id);
+        dispatch({type:'remove'});
+            notification['success']({
+            message: 'Đã xóa thành viên',
+            duration: 3
+        })
+    }
+    // const handleCreateMember = (event) => {
+    //     event.preventDefault();
+    //     if ((name==''||name==undefined)||(age==''||age==undefined)||(gender==''||gender==undefined)||(address=='')||(phone=='')) {
+    //         notification['warning']({
+    //             message: 'Xin hãy điền đầy đủ thông tin',
+    //             duration: 3
+    //         })
+    //     } else {
+    //     setMember((item) => [...item, {
+    //         id: member.length + 1,
+    //         name: name,
+    //         age: age,
+    //         phone: phone,
+    //         gender: gender,
+    //         address: address,
+    //     }])}
+    //     console.log(phone);
+    // }
+
+    // const removeMember = (id) => {
+    //     const removedData = member.filter((item) => item.id !== id);
+    //     setMember(removedData);
+
+    //     notification['success']({
+    //         message: 'Đã xóa thành viên',
+    //         duration: 3
+    //     })
+    // }
 
     const confirmDelete = () => {
-        setMember([]);
-
+        // setMember([]);
+        dispatch({type:'delall'});
         notification['success']({
             message: 'Không còn thành viên',
             duration: 3
         });
-        return;
+        // return;
     }
 
     const cancelDelete = () => {
         return;
     }
 
-    const removeMember = (id) => {
-        const removedData = member.filter((item) => item.id !== id);
-        setMember(removedData);
-
-        notification['success']({
-            message: 'Đã xóa thành viên',
-            duration: 3
-        })
-    }
+    
 
     
     const searchMember = (keyword) => {
-        const searchMember = member.filter((item) => item.name.toLowerCase().indexOf(keyword.toLowerCase()) > -1);
-        setMember(searchMember);
+        // const searchMember = member.filter((item) => item.name.toLowerCase().indexOf(keyword.toLowerCase()) > -1);
+        // setMember(searchMember);
     }
 
     return (
@@ -135,7 +198,7 @@ export default function ManagerMember() {
                 </Row>
                 <List
                     itemLayout="horizontal"
-                    dataSource={member}
+                    dataSource={state.member}
                     renderItem={item => (
                         <List.Item className="Member" style={{ textAlign: 'left' }}>
                             <List.Item.Meta 
@@ -173,3 +236,5 @@ export default function ManagerMember() {
         </>
     )
 }
+
+export default ManagerMember;
